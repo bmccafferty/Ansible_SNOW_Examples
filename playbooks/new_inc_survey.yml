@@ -13,7 +13,7 @@
         password: "{{ snow_pass  }}"
 
       state: new
-      caller: "{{ awx_user_id }}"
+      caller: "{{ awx_user_name }}"
       short_description: "{{ snow_inc_short }}"
       description: "{{ snow_inc_desc }}"
       impact: "{{ snow_impact }}"
@@ -22,4 +22,4 @@
 
   - name: Confirm INC Number
     debug:
-       msg: "A New INC Has been raised for {{ awx_user_id }} with number - {{ inc_number.record.number }}" 
+       msg: "A New INC Has been raised for {{ awx_user_name }} with number - {{ inc_number.record.number }}" 
