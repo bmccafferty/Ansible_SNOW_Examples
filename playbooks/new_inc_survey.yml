@@ -1,0 +1,25 @@
+---
+- name: Create INC From Survey
+  hosts: all
+  gather_facts: no
+  tasks:
+  - include_vars: ../vars/snow.yml
+  
+  - name: Create INC
+    servicenow.itsm.incident:
+      instance: 
+        host: "{{ snow_host  }}"
+        username: "{{ snow_user }}"
+        password: "{{ snow_pass  }}"
+
+      state: new
+      caller: "{{ awx_user_id }}"
+      short_description: "{{ snow_inc_short }}"
+      description: "{{ snow_inc_desc }}"
+      impact: "{{ snow_impact }}"
+      urgency: "{{ snow_urgency }}"
+    register: inc_number
+
+  - name: Confirm INC Number
+    debug:
+       msg: "A New INC Has been raised for {{ awx_user_id }} with number - {{ inc_number.record.number }}" 
