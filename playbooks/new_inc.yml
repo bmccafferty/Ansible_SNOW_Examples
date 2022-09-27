@@ -1,0 +1,30 @@
+---
+- name: Create INC
+  hosts: all
+  gather_facts: no
+  tasks:
+  - include_vars: ../vars/snow.yml
+  
+  - name: Create INC
+    servicenow.itsm.incident:
+      instance: 
+        host: "{{ snow_host  }}"
+        username: "{{ snow_user }}"
+        password: "{{ snow_pass  }}"
+
+      state: new
+      caller: admin
+      short_description: A Test INC
+      description: Brian is testing INC Raising
+      impact: low
+      urgency: low
+      other:
+        cmdb_ci: lnux100 
+    register: inc_number
+
+  - debug: 
+      var: inc_number.record
+
+  - name: Display a nice message
+    debug:
+       msg: "A New INC Has been raised with number - {{ inc_number.record.number }}" 

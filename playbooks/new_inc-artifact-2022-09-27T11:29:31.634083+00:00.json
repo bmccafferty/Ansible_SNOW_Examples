@@ -1,0 +1,64 @@
+{
+    "version": "1.0.0",
+    "plays": [
+        {
+            "playbook": "/root/git/Ansible_SNOW_Examples/playbooks/new_inc.yml",
+            "playbook_uuid": "6258334c-da3d-4694-b142-716b610e12fd",
+            "play": "Create INC",
+            "play_uuid": "6edc84be-1e5a-bdcc-8a94-000000000010",
+            "play_pattern": "all",
+            "name": "Create INC",
+            "pattern": "all",
+            "uuid": "6edc84be-1e5a-bdcc-8a94-000000000010",
+            "__play_name": "Create INC",
+            "tasks": [
+                {
+                    "playbook": "/root/git/Ansible_SNOW_Examples/playbooks/new_inc.yml",
+                    "playbook_uuid": "6258334c-da3d-4694-b142-716b610e12fd",
+                    "play": "Create INC",
+                    "play_uuid": "6edc84be-1e5a-bdcc-8a94-000000000010",
+                    "play_pattern": "all",
+                    "task": "include_vars",
+                    "task_uuid": "6edc84be-1e5a-bdcc-8a94-000000000012",
+                    "task_action": "include_vars",
+                    "task_args": "",
+                    "task_path": "/root/git/Ansible_SNOW_Examples/playbooks/new_inc.yml:6",
+                    "host": "vm.bdm.scot",
+                    "uuid": "70165980-9710-4a5a-916a-8d2ba48e3a39",
+                    "__host": "vm.bdm.scot",
+                    "__result": "FAILED",
+                    "__changed": false,
+                    "__duration": "0s",
+                    "__number": 0,
+                    "__task": "include_vars",
+                    "__task_action": "include_vars",
+                    "remote_addr": "vm.bdm.scot",
+                    "res": {
+                        "message": "Attempting to decrypt but no vault secrets found",
+                        "ansible_included_var_files": [],
+                        "ansible_facts": {},
+                        "_ansible_no_log": false,
+                        "changed": false
+                    },
+                    "start": "2022-09-27T11:29:30.901464",
+                    "end": "2022-09-27T11:29:30.915890",
+                    "duration": 0.014426,
+                    "ignore_errors": null,
+                    "event_loop": null
+                }
+            ]
+        }
+    ],
+    "stdout": [
+        "",
+        "PLAY [Create INC] **************************************************************",
+        "",
+        "TASK [include_vars] ************************************************************",
+        "\u001b[0;31mfatal: [vm.bdm.scot]: FAILED! => {\"ansible_facts\": {}, \"ansible_included_var_files\": [], \"changed\": false, \"message\": \"Attempting to decrypt but no vault secrets found\"}\u001b[0m",
+        "",
+        "PLAY RECAP *********************************************************************",
+        "\u001b[0;31mvm.bdm.scot\u001b[0m                : ok=0    changed=0    unreachable=0    \u001b[0;31mfailed=1   \u001b[0m skipped=0    rescued=0    ignored=0   "
+    ],
+    "status": "failed",
+    "status_color": 9
+}
