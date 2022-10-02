@@ -1,0 +1,31 @@
+---
+- name: Create Change From Survey
+  hosts: all
+  gather_facts: no
+  tasks:
+  - include_vars: ../vars/snow.yml
+  
+  - name: Create Change
+    servicenow.itsm.change_request:
+      instance:
+        host: "{{ snow_host  }}"
+        username: "{{ snow_user }}"
+        password: "{{ snow_pass  }}"
+
+      type: "{{ snow_chg_type }}"
+      state: new
+      requested_by: "{{ awx_user_name }}"
+      short_description: "{{ snow_chg_short_desc }}"
+      description: "{{ snow_chg_desc }}"
+      priority: "{{ snow_chg_prio }}"
+      risk: "{{ snow_chg_risk }}"
+      impact: "{{ snow_chg_impact }}"
+      assignment_group: "{{ snow_chg_assign }}"
+    register: chg_number
+
+  - debug: 
+      var: chg_number.record
+
+  - name: Display a nice message
+    debug:
+       msg: "A New Change Has been raised with number - {{ chg_number.record.number }}" 
