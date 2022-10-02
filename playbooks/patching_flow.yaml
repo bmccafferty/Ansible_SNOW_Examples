@@ -1,0 +1,121 @@
+---
+- name: Patching Check a Change before starting
+  hosts: all
+  gather_facts: no
+  tasks:
+  - include_vars: ../vars/snow.yml
+
+  - name: Check Change State
+    servicenow.itsm.change_request_info:
+      instance:
+        host: "{{ snow_host }}"
+        username: "{{ snow_user }}"
+        password: "{{ snow_pass  }}"
+      number: "{{ snow_chg_no }}"
+    register: chg_details
+
+  - debug:
+      var: chg_details.records
+
+  - name: Display a nice message
+    ansible.builtin.debug:
+       msg: "Change State - {{ chg_details.records.0.state }}"
+    when: "chg_details.records | length > 0 "
+
+  - name: Error out if no records returned
+    ansible.builtin.fail:
+       msg: " {{ snow_chg_no }} has returned no records from SNOW, Please Check and re-enter"
+    when: "chg_details.records | length == 0 "
+
+  - name: Check if Change Record is in scheduled state
+    ansible.builtin.fail:
+       msg: "{{ snow_chg_no }} is currently reporting as {{ chg_details.records.0.state }}, A Change must be in scheduled or implement before proceeding"
+    when: (chg_details.records.0.state != 'scheduled') and (chg_details.records.0.state != 'implement')
+
+  - name: Start the patching process and move the change onto the next stage
+    block:
+      - name: Move the change to impliment
+        servicenow.itsm.change_request:
+          instance:
+            host: "{{ snow_host }}"
+            username: "{{ snow_user }}"
+            password: "{{ snow_pass }}"
+
+          state: implement
+          number: "{{ snow_chg_no }}"
+
+      - name: Patch the server
+        ansible.builtin.yum:
+          name: '*'
+          state: latest
+
+      - name: Reboot the server post patching
+        ansible.builtin.reboot:
+          reboot_timeout: 3600
+
+      - name: Move the change to review
+        servicenow.itsm.change_request:
+          instance:
+            host: "{{ snow_host }}"
+            username: "{{ snow_user }}"
+            password: "{{ snow_pass }}"
+
+          state: review
+          number: "{{ snow_chg_no }}"
+
+      - name: Patching Complete Close the Change
+        servicenow.itsm.change_request:
+          instance:
+            host: "{{ snow_host }}"
+            username: "{{ snow_user }}"
+            password: "{{ snow_pass }}"
+
+          state: closed
+          close_code: "successful"
+          close_notes: "Closed Automaticly By Ansible As Successful."
+          number: "{{ snow_chg_no }}"
+
+      - name: Display a nice message
+        ansible.builtin.debug:
+           msg: "Change - {{ snow_chg_no }} has been completed sucessfully and closed"
+
+    rescue:
+      - name: Create INC
+        servicenow.itsm.incident:
+          instance:
+            host: "{{ snow_host  }}"
+            username: "{{ snow_user }}"
+            password: "{{ snow_pass  }}"
+          state: new
+          caller: admin
+          short_description: "Automated Ansible Patching Has Failed - {{ snow_chg_no }}"
+          description: "Automated Ansible Patching Has Failed - {{ snow_chg_no }}, Please check the details of the change record and the ansible run for more details"
+          impact: low
+          urgency: low
+        register: inc_number
+
+      - name: Move the change to review
+        servicenow.itsm.change_request:
+          instance:
+            host: "{{ snow_host }}"
+            username: "{{ snow_user }}"
+            password: "{{ snow_pass }}"
+
+          state: review
+          number: "{{ snow_chg_no }}"
+
+      - name: Patching Failed Close Change as Failed
+        servicenow.itsm.change_request:
+          instance:
+            host: "{{ snow_host }}"
+            username: "{{ snow_user }}"
+            password: "{{ snow_pass }}"
+
+          state: closed
+          close_code: "unsuccessful"
+          close_notes: "Closed Automaticly By Ansible As Unsuccessful.  An INC Has been raised for this failure {{ inc_number.record.number  }}"
+          number: "{{ snow_chg_no }}"
+
+      - name: Display a nice message
+        ansible.builtin.debug:
+           msg: "Change - {{ snow_chg_no }} has failed, a ticket has been raised {{ inc_number.record.number  }} and the change has been closed as Unsuccessful"
