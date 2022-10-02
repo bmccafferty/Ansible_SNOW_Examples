@@ -1,9 +1,9 @@
 # Ansible SNOW Examples
-From a live Session with Red Hat Accelerators - Ansible Automation Platform & ServiceNow
+From a live Session with Red Hat Accelerators - Ansible Automation Platform & ServiceNow October 2022.
 
-[Demo Script](https://github.com/bmccafferty/Ansible_SNOW_Examples/blob/main/Demo_Script.md) Covers main talking points
-
-[Slide Deck](https://docs.google.com/presentation/d/1BdHwvDWtBvc_DTvyPvHOZr6JTI5bZVMNLcssjjRq0xY/edit?usp=sharing) (Requires RH Account)
+Talk Materials:
+- [Demo Script](https://github.com/bmccafferty/Ansible_SNOW_Examples/blob/main/Demo_Script.md) Covers main talking points
+- [Slide Deck](https://docs.google.com/presentation/d/1BdHwvDWtBvc_DTvyPvHOZr6JTI5bZVMNLcssjjRq0xY/edit?usp=sharing) (Requires RH Account)
 
 Envorment Used:
 - RHEL 8.5 VM
@@ -19,4 +19,4 @@ Further Reading:
 - [servicenow.itsm Collection GitHub Repo](https://github.com/ansible-collections/servicenow.itsm)
 
 What to look out for:
-Demo's & Announcements at the upcoming Ansible Fest 2022 - https://www.ansible.com/ansiblefest
+- Demo's & Announcements at the upcoming Ansible Fest 2022 - https://www.ansible.com/ansiblefest
