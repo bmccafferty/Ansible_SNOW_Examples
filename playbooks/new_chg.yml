@@ -20,6 +20,7 @@
       priority: low
       risk: low
       impact: low
+      assignment_group: ITSM Engineering
       other:
         expected_start: 2022-11-01
     register: chg_number
