@@ -15,8 +15,8 @@ Envorment Used:
 
 
 Further Reading:
-[Automation Hub servicenow.itsm Collection Documentation](https://console.redhat.com/ansible/automation-hub/repo/published/servicenow/itsm/docs)
-[servicenow.itsm Collection GitHub Repo](https://github.com/ansible-collections/servicenow.itsm)
+- [Automation Hub servicenow.itsm Collection Documentation](https://console.redhat.com/ansible/automation-hub/repo/published/servicenow/itsm/docs)
+- [servicenow.itsm Collection GitHub Repo](https://github.com/ansible-collections/servicenow.itsm)
 
 What to look out for:
 Demo's & Announcements at the upcoming Ansible Fest 2022 - https://www.ansible.com/ansiblefest
