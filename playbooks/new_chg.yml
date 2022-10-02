@@ -1,0 +1,32 @@
+---
+- name: Create Change
+  hosts: all
+  gather_facts: no
+  tasks:
+  - include_vars: ../vars/snow.yml
+  
+  - name: Create std change
+    servicenow.itsm.change_request:
+      instance:
+        host: "{{ snow_host  }}"
+        username: "{{ snow_user }}"
+        password: "{{ snow_pass  }}"
+
+      type: standard
+      state: new
+      requested_by: admin
+      short_description: Test Change from Ansible
+      description: This is a change test from Ansible, Nothing will really happen
+      priority: low
+      risk: low
+      impact: low
+      other:
+        expected_start: 2022-11-01
+      register: chg_number
+
+  - debug: 
+      var: chg_number.record
+
+  - name: Display a nice message
+    debug:
+       msg: "A New Change Has been raised with number - {{ chg_number.record.number }}" 
