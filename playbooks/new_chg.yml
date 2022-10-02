@@ -22,7 +22,7 @@
       impact: low
       other:
         expected_start: 2022-11-01
-      register: chg_number
+    register: chg_number
 
   - debug: 
       var: chg_number.record
