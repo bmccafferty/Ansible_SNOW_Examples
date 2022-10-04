@@ -88,8 +88,8 @@
             password: "{{ snow_pass  }}"
           state: new
           caller: admin
-          short_description: "Automated Ansible Patching Has Failed - {{ snow_chg_no }}"
-          description: "Automated Ansible Patching Has Failed - {{ snow_chg_no }}, Please check the details of the change record and the ansible run for more details"
+          short_description: "Automated Ansible Patching Has Failed - {{ snow_chg_no }} on {{ inventory_hostname }}"
+          description: "Automated Ansible Patching Has Failed - {{ snow_chg_no }}. The imacted host is {{ inventory_hostname }}. The Error detected was {{ ansible_failed_result }}. Please check the details of the change record and the ansible run for more details"
           impact: low
           urgency: low
         register: inc_number
