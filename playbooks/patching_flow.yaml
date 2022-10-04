@@ -17,18 +17,6 @@
   - debug:
       var: chg_details.records
 
-  - name: Pull CI Name from Change sys id
-    servicenow.itsm.configuration_item_info:
-      instance:
-        host: "{{ snow_host }}"
-        username: "{{ snow_user }}"
-        password: "{{ snow_pass  }}"
-      sys_id: "{{ chg_details.records.0.cmdb_ci }}"
-    register: cmdb_result
-
-  - debug:
-      var: cmdb_result.records.0.name
-
   - name: Display a nice message
     ansible.builtin.debug:
        msg: "Change State - {{ chg_details.records.0.state }}"
@@ -43,6 +31,18 @@
     ansible.builtin.fail:
        msg: "{{ snow_chg_no }} is currently reporting as {{ chg_details.records.0.state }}, A Change must be in scheduled or implement before proceeding"
     when: (chg_details.records.0.state != 'scheduled') and (chg_details.records.0.state != 'implement')
+
+  - name: Pull CI Name from Change sys id
+    servicenow.itsm.configuration_item_info:
+      instance:
+        host: "{{ snow_host }}"
+        username: "{{ snow_user }}"
+        password: "{{ snow_pass  }}"
+      sys_id: "{{ chg_details.records.0.cmdb_ci }}"
+    register: cmdb_result
+
+  - debug:
+      var: cmdb_result.records.0.name
 
   - name: Check if Change is for the host being run against
     ansible.builtin.fail:
