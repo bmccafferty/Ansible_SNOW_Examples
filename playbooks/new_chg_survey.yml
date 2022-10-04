@@ -21,6 +21,8 @@
       risk: "{{ snow_chg_risk }}"
       impact: "{{ snow_chg_impact }}"
       assignment_group: "{{ snow_chg_assign }}"
+      other:
+        cmdb_ci: "{{ snow_ci }}"
     register: chg_number
 
   - debug: 
