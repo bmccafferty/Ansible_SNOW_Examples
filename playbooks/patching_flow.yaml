@@ -17,6 +17,18 @@
   - debug:
       var: chg_details.records
 
+  - name: Pull CI Name from Change sys id
+    servicenow.itsm.configuration_item_info:
+      instance:
+        host: "{{ snow_host }}"
+        username: "{{ snow_user }}"
+        password: "{{ snow_pass  }}"
+      sys_id: "{{ chg_details.records.0.cmdb_ci }}"
+    register: cmdb_result
+
+  - debug:
+      var: cmdb_result.records.0.name
+
   - name: Display a nice message
     ansible.builtin.debug:
        msg: "Change State - {{ chg_details.records.0.state }}"
@@ -31,6 +43,11 @@
     ansible.builtin.fail:
        msg: "{{ snow_chg_no }} is currently reporting as {{ chg_details.records.0.state }}, A Change must be in scheduled or implement before proceeding"
     when: (chg_details.records.0.state != 'scheduled') and (chg_details.records.0.state != 'implement')
+
+  - name: Check if Change is for the host being run against
+    ansible.builtin.fail:
+       msg: "The host requested {{ inventory_hostname }} does not match the change record in SNOW {{ cmdb_result.records.0.name }}. Please ensure this is the correct change and re-try"
+    when: inventory_hostname != cmdb_result.records.0.name
 
   - name: Start the patching process and move the change onto the next stage
     block:
@@ -92,6 +109,8 @@
           description: "Automated Ansible Patching Has Failed - {{ snow_chg_no }}. The imacted host is {{ inventory_hostname }}. The Error detected was {{ ansible_failed_result }}. Please check the details of the change record and the ansible run for more details"
           impact: low
           urgency: low
+          other:
+            cmdb_ci: "{{ inventory_hostname  }}"
         register: inc_number
 
       - name: Move the change to review
