@@ -13,12 +13,12 @@ cd /root/git
 export ANSIBLE_VAULT_PASSWORD_FILE=.vault_password
 
 # Run first Demo (Create INC) via ansible-navigator
-ansible-navigator --mode stdout run  ~/git/Ansible_SNOW_Examples/playbooks/new_inc.yml -i ~/git/inventory/inv_files/lab.yml -l vm.bdm.scot
+ansible-navigator --mode stdout run --pp never  ~/git/Ansible_SNOW_Examples/playbooks/new_inc.yml -i ~/git/aap-inv/inv_files/local_lab.yml -l aap-control
 
 # Show Next Demo on Controller (INC Survey)
 
 # Run 2nd Demo (Create CHG) via ansible-navigator
-ansible-navigator --mode stdout run  ~/git/Ansible_SNOW_Examples/playbooks/new_chg.yml -i ~/git/inventory/inv_files/lab.yml -l vm.bdm.scot
+ansible-navigator --mode stdout run --pp never ~/git/Ansible_SNOW_Examples/playbooks/new_chg.yml -i ~/git/aap-inv/inv_files/local_lab.yml -l aap-control
 
 # Show Next Demo on Controller (CHG Survey)
 
