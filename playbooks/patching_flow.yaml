@@ -1,7 +1,7 @@
 ---
 - name: Patching Check a Change before starting
   hosts: all
-  gather_facts: no
+  gather_facts: false
   tasks:
   - include_vars: ../vars/snow.yml
 
@@ -10,7 +10,7 @@
       instance:
         host: "{{ snow_host }}"
         username: "{{ snow_user }}"
-        password: "{{ snow_pass  }}"
+        password: "{{ snow_pass }}"
       number: "{{ snow_chg_no }}"
     register: chg_details
 
@@ -19,17 +19,17 @@
 
   - name: Display a nice message
     ansible.builtin.debug:
-       msg: "Change State - {{ chg_details.records.0.state }}"
-    when: "chg_details.records | length > 0 "
+      msg: "Change State - {{ chg_details.records.0.state }}"
+    when: "chg_details.records | length > 0"
 
   - name: Error out if no records returned
     ansible.builtin.fail:
-       msg: " {{ snow_chg_no }} has returned no records from SNOW, Please Check and re-enter"
-    when: "chg_details.records | length == 0 "
+      msg: "{{ snow_chg_no }} has returned no records from SNOW, Please Check and re-enter"
+    when: "chg_details.records | length == 0"
 
   - name: Check if Change Record is in scheduled state
     ansible.builtin.fail:
-       msg: "{{ snow_chg_no }} is currently reporting as {{ chg_details.records.0.state }}, A Change must be in scheduled or implement before proceeding"
+      msg: "{{ snow_chg_no }} is currently reporting as {{ chg_details.records.0.state }}, A Change must be in scheduled or implement before proceeding"
     when: (chg_details.records.0.state != 'scheduled') and (chg_details.records.0.state != 'implement')
 
   - name: Pull CI Name from Change sys id
@@ -37,7 +37,7 @@
       instance:
         host: "{{ snow_host }}"
         username: "{{ snow_user }}"
-        password: "{{ snow_pass  }}"
+        password: "{{ snow_pass }}"
       sys_id: "{{ chg_details.records.0.cmdb_ci }}"
     register: cmdb_result
 
@@ -46,7 +46,7 @@
 
   - name: Check if Change is for the host being run against
     ansible.builtin.fail:
-       msg: "The host requested {{ inventory_hostname }} does not match the change record in SNOW {{ cmdb_result.records.0.name }}. Please ensure this is the correct change and re-try"
+      msg: "The host requested {{ inventory_hostname }} does not match the change record in SNOW {{ cmdb_result.records.0.name }}. Please ensure this is the correct change and re-try"
     when: inventory_hostname != cmdb_result.records.0.name
 
   - name: Start the patching process and move the change onto the next stage
@@ -57,7 +57,6 @@
             host: "{{ snow_host }}"
             username: "{{ snow_user }}"
             password: "{{ snow_pass }}"
-
           state: implement
           number: "{{ snow_chg_no }}"
 
@@ -100,9 +99,9 @@
       - name: Create INC
         servicenow.itsm.incident:
           instance:
-            host: "{{ snow_host  }}"
+            host: "{{ snow_host }}"
             username: "{{ snow_user }}"
-            password: "{{ snow_pass  }}"
+            password: "{{ snow_pass }}"
           state: new
           caller: admin
           short_description: "Automated Ansible Patching Has Failed - {{ snow_chg_no }} on {{ inventory_hostname }}"
@@ -110,7 +109,7 @@
           impact: low
           urgency: low
           other:
-            cmdb_ci: "{{ inventory_hostname  }}"
+            cmdb_ci: "{{ inventory_hostname }}"
         register: inc_number
 
       - name: Move the change to review
@@ -132,9 +131,9 @@
 
           state: closed
           close_code: "unsuccessful"
-          close_notes: "Closed Automaticly By Ansible As Unsuccessful.  An INC Has been raised for this failure {{ inc_number.record.number  }}"
+          close_notes: "Closed Automaticly By Ansible As Unsuccessful.  An INC Has been raised for this failure {{ inc_number.record.number }}"
           number: "{{ snow_chg_no }}"
 
       - name: Display a nice message
         ansible.builtin.debug:
-           msg: "Change - {{ snow_chg_no }} has failed, a ticket has been raised {{ inc_number.record.number  }} and the change has been closed as Unsuccessful"
+          msg: "Change - {{ snow_chg_no }} has failed, a ticket has been raised {{ inc_number.record.number }} and the change has been closed as Unsuccessful"
