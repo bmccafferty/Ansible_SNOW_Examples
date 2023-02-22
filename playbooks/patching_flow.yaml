@@ -3,7 +3,9 @@
   hosts: all
   gather_facts: false
   tasks:
-  - include_vars: ../vars/snow.yml
+
+  - name: Include vars
+    ansible.builtin.include_vars: ../vars/snow.yml
 
   - name: Check Change State
     servicenow.itsm.change_request_info:
@@ -14,7 +16,8 @@
       number: "{{ snow_chg_no }}"
     register: chg_details
 
-  - debug:
+  - name: Print Change Record details
+    ansible.builtin.debug:
       var: chg_details.records
 
   - name: Display a nice message
@@ -41,7 +44,8 @@
       sys_id: "{{ chg_details.records.0.cmdb_ci }}"
     register: cmdb_result
 
-  - debug:
+  - name: Display a nice message
+    ansible.builtin.debug:
       var: cmdb_result.records.0.name
 
   - name: Check if Change is for the host being run against
@@ -64,6 +68,7 @@
         ansible.builtin.yum:
           name: '*'
           state: latest
+          update_only: true
 
       - name: Reboot the server post patching
         ansible.builtin.reboot:
@@ -93,7 +98,7 @@
 
       - name: Display a nice message
         ansible.builtin.debug:
-           msg: "Change - {{ snow_chg_no }} has been completed sucessfully and closed"
+          msg: "Change - {{ snow_chg_no }} has been completed sucessfully and closed"
 
     rescue:
       - name: Create INC
