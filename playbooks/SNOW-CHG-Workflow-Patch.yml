@@ -1,5 +1,5 @@
 ---
-- name: Patching Check a Change before starting
+- name: Patching Host and report change status
   hosts: all
   gather_facts: false
   tasks:

@@ -1,5 +1,5 @@
 ---
-- name: Patching Check a Change before starting
+- name: Check a Change before starting
   hosts: all
   gather_facts: false
   tasks:
