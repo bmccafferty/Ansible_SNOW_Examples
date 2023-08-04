@@ -1,0 +1,38 @@
+---
+- name: Patch Host via Satellite
+  hosts: all
+  gather_facts: no
+  tasks:
+  - include_vars: ../vars/sat.yml
+
+  - name: Run Patch Job
+    redhat.satellite.job_invocation:
+      search_query: "name ^ (linda-faver.lab.bdm.scot)"
+      job_template: "Update Package - Katello Script Default"
+      server_url: "{{ sat_host }}"
+      username: "{{ sat_user }}"
+      password: "{{ sat_pass }}"
+      validate_certs: false
+    register: patchjob_data
+
+  - name: Print Patch Job Data
+    ansible.builtin.debug:
+      var: patchjob_data.entity.job_invocations[0].task.id
+
+  - name: Check patching task status
+    ansible.builtin.uri:
+      url: "{{ sat_host }}/foreman_tasks/api/tasks/{{ patchjob_data.entity.job_invocations[0].task.id }}"
+      status_code: 200
+      method: GET
+      user: "{{ sat_user }}"
+      password: "{{ sat_pass }}"
+      force_basic_auth: yes
+      return_content: yes
+      validate_certs: false
+      headers:
+        Content-Type: "application/json"
+    register: upgrade_task
+    until: upgrade_task.json.result != "pending"  
+    retries: 30
+    delay: 10
+    failed_when: upgrade_task.json.result != "success"
